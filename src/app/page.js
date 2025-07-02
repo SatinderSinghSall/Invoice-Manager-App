@@ -1,6 +1,7 @@
 import CreateInvoice from "@/components/invoice/CreateInvoice";
 import ListInvoice from "@/components/invoice/ListInvoice";
 import { Separator } from "@/components/ui/separator";
+import { Suspense } from "react";
 
 export default function Home() {
   return (
@@ -16,7 +17,10 @@ export default function Home() {
         </div>
 
         <Separator className="my-4 border-b-[2px] border-color-light-blue" />
-        <ListInvoice />
+
+        <Suspense fallback={<div>Loading invoices...</div>}>
+          <ListInvoice />
+        </Suspense>
       </section>
     </div>
   );
