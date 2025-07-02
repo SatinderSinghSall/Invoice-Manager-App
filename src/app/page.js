@@ -12,7 +12,9 @@ export default function Home() {
             Invoice Manager App
           </h2>
           <div className="flex justify-center sm:justify-end">
-            <CreateInvoice />
+            <Suspense fallback={<div>Loading Create Invoice...</div>}>
+              <CreateInvoice />
+            </Suspense>
           </div>
         </div>
 
