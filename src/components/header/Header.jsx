@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import Link from "next/link";
-import { Menu, X } from "lucide-react"; // for hamburger icon
+import { Menu, X } from "lucide-react";
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -24,7 +24,7 @@ export default function Header() {
             href="/"
             className="text-white bg-blue-700 hover:bg-blue-600 hover:text-black px-4 py-2 rounded-full transition-all duration-200 shadow-sm hover:shadow-md"
           >
-            Satinder - Invoice Manager
+            📊 My Dashboard
           </Link>
         </nav>
 
