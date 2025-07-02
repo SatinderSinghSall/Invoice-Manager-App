@@ -49,3 +49,39 @@ export const createInvoice = async (formData) => {
     };
   }
 };
+
+export const getInvoices = async (params) => {
+  const page = parseInt(params.page) || 1;
+  const limit = parseInt(params.limit) || 10;
+  const skip = (page - 1) * limit;
+
+  const query = {
+    ...(params.search && {
+      $or: [
+        { amount: { $regex: params.search, option: "i" } },
+        { status: { $regex: params.search, option: "i" } },
+        { "customer.name": { $regex: params.search, option: "i" } },
+        { "customer.email": { $regex: params.search, option: "i" } },
+      ],
+    }),
+  };
+
+  try {
+    await connectMongoDB();
+
+    const invoices = await Invoice.find(query).skip(skip).limit(limit);
+    const total = await Invoice.countDocuments(query); // FIXED
+    const pageCount = Math.ceil(total / limit);
+
+    return {
+      invoices,
+      total,
+      pageCount,
+    };
+  } catch (error) {
+    console.log(`Error Getting Invoices: ${error}`);
+    return {
+      error: getErrorMessages(error),
+    };
+  }
+};

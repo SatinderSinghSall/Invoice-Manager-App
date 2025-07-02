@@ -1,9 +1,24 @@
+import { getInvoices } from "@/actions/invoiceActions";
 import CreateInvoice from "@/components/invoice/CreateInvoice";
 import ListInvoice from "@/components/invoice/ListInvoice";
 import { Separator } from "@/components/ui/separator";
 import { Suspense } from "react";
 
-export default function Home() {
+export default async function Home({ searchParams }) {
+  const search = searchParams?.search || "";
+  const page = searchParams?.page || "";
+
+  const res = await getInvoices({
+    search,
+    page,
+    limit: 5,
+  });
+  const { invoices, total, pageCount } = await getInvoices({
+    search,
+    page,
+    limit: 5,
+  });
+
   return (
     <div className="flex justify-center min-h-[82vh]">
       <section className="w-full px-4 sm:px-6 md:px-8 max-w-[1400px]">
@@ -21,7 +36,11 @@ export default function Home() {
         <Separator className="my-4 border-b-[2px] border-color-light-blue" />
 
         <Suspense fallback={<div>Loading invoices...</div>}>
-          <ListInvoice />
+          <ListInvoice
+            invoices={invoices}
+            total={total}
+            pageCount={pageCount}
+          />
         </Suspense>
       </section>
     </div>
