@@ -65,10 +65,10 @@ export const getInvoices = async (params) => {
   const query = {
     ...(params.search && {
       $or: [
-        { amount: { $regex: params.search, options: "i" } },
-        { status: { $regex: params.search, options: "i" } },
-        { "customer.name": { $regex: params.search, options: "i" } },
-        { "customer.email": { $regex: params.search, options: "i" } },
+        { amount: { $regex: params.search, $options: "i" } },
+        { status: { $regex: params.search, $options: "i" } },
+        { "customer.name": { $regex: params.search, $options: "i" } },
+        { "customer.email": { $regex: params.search, $options: "i" } },
       ],
     }),
   };

@@ -26,6 +26,23 @@ function ListInvoice({ invoices = [], pageNumber, total }) {
   const currentPage = useRef(1);
   const ITEMS_PER_PAGE = 5;
 
+  const [search, setSearch] = useState("");
+
+  const handleSearch = async (e) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("page", 1);
+    if (search) {
+      params.set("search", search);
+    } else {
+      params.delete("search");
+    }
+    router.replace(`${pathName}?${params.toString()}`);
+  };
+
+  useEffect(() => {
+    handleSearch();
+  }, [search]);
+
   useEffect(() => {
     if (total > 0) {
       setPageCount(Math.ceil(total / ITEMS_PER_PAGE));
@@ -49,7 +66,11 @@ function ListInvoice({ invoices = [], pageNumber, total }) {
     <div>
       <div className="flex justify-between items-center border-b border-gray-300 pb-3 mb-4">
         <p className="text-sm text-gray-600">{total} Invoices</p>
-        <Search placeholder="Search an Invoice..." />
+        <Search
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search an Invoice..."
+        />
       </div>
 
       <Table>
