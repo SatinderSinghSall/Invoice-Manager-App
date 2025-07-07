@@ -23,6 +23,9 @@ import "rc-tooltip/assets/bootstrap_white.css";
 import { RiMailSendLine } from "react-icons/ri";
 import { FaEdit } from "react-icons/fa";
 import Link from "next/link";
+import DeleteModal from "../widgets/DeleteModel";
+import { deleteInvoice } from "@/actions/invoiceActions";
+import toast from "react-hot-toast";
 
 function ListInvoice({ invoices = [], pageNumber, total }) {
   const router = useRouter();
@@ -77,6 +80,17 @@ function ListInvoice({ invoices = [], pageNumber, total }) {
     currentPage.current = selectedPage;
     params.set("page", selectedPage);
     router.replace(`${pathName}?${params.toString()}`);
+  }
+
+  async function onDeleteInvoice(id) {
+    const response = await deleteInvoice(id);
+    console.log(response);
+    if (response?.error) {
+      toast.error(response?.error);
+    }
+    if (response?.message) {
+      toast.success(response?.message);
+    }
   }
 
   return (
@@ -177,10 +191,15 @@ function ListInvoice({ invoices = [], pageNumber, total }) {
                     <Tooltip
                       placement="top"
                       trigger={["hover"]}
-                      overlay={<span>Send an Email</span>}
+                      overlay={<span>Delete an Invoice</span>}
                     >
                       <span className="cursor-pointer text-red-500 font-medium">
-                        Delete
+                        <DeleteModal
+                          title="Delete Invoice"
+                          description="Are you sore you want to delete this invoice?"
+                          password="delete"
+                          onClick={() => onDeleteInvoice(invoice?._id)}
+                        />
                       </span>
                     </Tooltip>
                   </span>
