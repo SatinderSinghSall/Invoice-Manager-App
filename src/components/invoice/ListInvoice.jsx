@@ -17,6 +17,7 @@ import ReactPaginate from "react-paginate";
 import { useSearchParams, usePathname, useRouter } from "next/navigation";
 import { FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useDebouncedCallback } from "use-debounce";
 
 function ListInvoice({ invoices = [], pageNumber, total }) {
   const router = useRouter();
@@ -39,8 +40,19 @@ function ListInvoice({ invoices = [], pageNumber, total }) {
     router.replace(`${pathName}?${params.toString()}`);
   };
 
+  const debouncedHandleSearch = useDebouncedCallback((e) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("page", 1);
+    if (search) {
+      params.set("search", search);
+    } else {
+      params.delete("search");
+    }
+    router.replace(`${pathName}?${params.toString()}`);
+  }, 500);
+
   useEffect(() => {
-    handleSearch();
+    debouncedHandleSearch();
   }, [search]);
 
   useEffect(() => {
