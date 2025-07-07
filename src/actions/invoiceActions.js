@@ -123,3 +123,35 @@ export const deleteInvoice = async (id) => {
     };
   }
 };
+
+export const getInvoice = async (id) => {
+  try {
+    await connectMongoDB();
+    const invoice = await Invoice.findById(id);
+    return JSON.stringify(invoice);
+  } catch (error) {
+    console.log(`Error Creating an Invoice: ${error}`);
+    return {
+      error: getErrorMessages(error),
+    };
+  }
+};
+
+export const updateInvoice = async (formData) => {
+  const { customer, amount, status, id } = formData;
+
+  try {
+    await connectMongoDB();
+    await Invoice.findByIdAndUpdate(id, {
+      amount,
+      status,
+    });
+    revalidatePath("/");
+    return { message: "Invoice Updated Successfully!" };
+  } catch (error) {
+    console.log(`Error Creating an Invoice: ${error}`);
+    return {
+      error: getErrorMessages(error),
+    };
+  }
+};

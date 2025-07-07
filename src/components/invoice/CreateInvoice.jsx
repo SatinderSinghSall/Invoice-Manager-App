@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ActionModal from "../widgets/ActionModal";
 import { Button } from "../ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -28,7 +28,11 @@ import { Input } from "../ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { LoadingButton } from "../widgets/Loader";
 import { useRouter, useSearchParams } from "next/navigation";
-import { createInvoice } from "@/actions/invoiceActions";
+import {
+  createInvoice,
+  getInvoice,
+  updateInvoice,
+} from "@/actions/invoiceActions";
 import toast from "react-hot-toast";
 
 const customers = [
@@ -134,10 +138,21 @@ const CreateInvoice = () => {
     // console.log(values);
     if (id) {
       //! Update an Invoice:
+      const response = await updateInvoice(formData);
+      // console.log(response);
+      if (response?.error) {
+        toast.error(response?.error);
+      }
+      if (response?.message) {
+        toast.success(response?.message);
+      }
+
+      form.reset();
+      setOpen(false);
     } else {
       //! Create an Invoice:
       const response = await createInvoice(formData);
-      console.log(response);
+      // console.log(response);
       if (response?.error) {
         toast.error(response?.error);
       }
@@ -151,6 +166,27 @@ const CreateInvoice = () => {
   }
 
   const isLoading = form.formState.isSubmitting;
+
+  useEffect(() => {
+    const fetchInvoice = async () => {
+      const response = await getInvoice(id);
+      const invoice = JSON.parse(response);
+      form.setValue("name", invoice?.customer?.name);
+      form.setValue("amount", invoice?.amount);
+      form.setValue("status", invoice?.status);
+    };
+
+    if (id) {
+      setOpen(true);
+      fetchInvoice();
+    }
+  }, [id]);
+
+  useEffect(() => {
+    if (!open) {
+      router.replace("/");
+    }
+  }, [open, router]);
 
   return (
     <div>
@@ -180,6 +216,7 @@ const CreateInvoice = () => {
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value}
+                    value={field.value}
                   >
                     <FormControl>
                       <SelectTrigger>
@@ -261,7 +298,7 @@ const CreateInvoice = () => {
               />
             ) : (
               <Button type="submit" className="w-full">
-                Submit
+                {id ? "Update Invoice" : "Create Invoice"}
               </Button>
             )}
           </form>
