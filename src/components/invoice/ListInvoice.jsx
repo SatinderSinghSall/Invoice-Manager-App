@@ -18,6 +18,11 @@ import { useSearchParams, usePathname, useRouter } from "next/navigation";
 import { FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useDebouncedCallback } from "use-debounce";
+import Tooltip from "rc-tooltip";
+import "rc-tooltip/assets/bootstrap_white.css";
+import { RiMailSendLine } from "react-icons/ri";
+import { FaEdit } from "react-icons/fa";
+import Link from "next/link";
 
 function ListInvoice({ invoices = [], pageNumber, total }) {
   const router = useRouter();
@@ -136,9 +141,49 @@ function ListInvoice({ invoices = [], pageNumber, total }) {
                     {invoice.status}
                   </Badge>
                 </TableCell>
-                <TableCell>
-                  {/* You can add edit/delete icons here */}
-                  Edit Delete Email
+                <TableCell className="flex space-x-3">
+                  <span>
+                    <Tooltip
+                      placement="top"
+                      trigger={["hover"]}
+                      overlay={<span>Send an Email</span>}
+                    >
+                      <RiMailSendLine
+                        size={24}
+                        color="purple"
+                        className="cursor-pointer"
+                        // onClick={() => sendThisInvoice(inv)}
+                      />
+                    </Tooltip>
+                  </span>
+
+                  <span>
+                    <Link href={`/?id=${invoice?._id}`}>
+                      <Tooltip
+                        placement="top"
+                        trigger={["hover"]}
+                        overlay={<span>Edit an Invoice</span>}
+                      >
+                        <FaEdit
+                          size={24}
+                          color="green"
+                          className="cursor-pointer"
+                        />
+                      </Tooltip>
+                    </Link>
+                  </span>
+
+                  <span>
+                    <Tooltip
+                      placement="top"
+                      trigger={["hover"]}
+                      overlay={<span>Send an Email</span>}
+                    >
+                      <span className="cursor-pointer text-red-500 font-medium">
+                        Delete
+                      </span>
+                    </Tooltip>
+                  </span>
                 </TableCell>
               </TableRow>
             ))
