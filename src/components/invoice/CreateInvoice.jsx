@@ -96,6 +96,13 @@ const customers = [
     image: "https://i.pravatar.cc/300?u=a042581f4e29026711d",
     email: "isabellaa@example.com",
   },
+  {
+    id: 11,
+    name: "Satinder Singh Sall",
+    image:
+      "https://media.licdn.com/dms/image/v2/D5603AQH9TYXWUszT5w/profile-displayphoto-shrink_200_200/profile-displayphoto-shrink_200_200/0/1686901912365?e=2147483647&v=beta&t=GZIWoRyXC0ANZqjqR04owgJZqy0jYhitGRCwEJmhPBA",
+    email: "satindersinghsall111@gmal.com",
+  },
 ];
 
 const formSchema = z.object({

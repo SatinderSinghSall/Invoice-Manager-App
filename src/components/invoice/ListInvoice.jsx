@@ -26,6 +26,7 @@ import Link from "next/link";
 import DeleteModal from "../widgets/DeleteModel";
 import { deleteInvoice } from "@/actions/invoiceActions";
 import toast from "react-hot-toast";
+import { sendEmail } from "@/actions/emailAction";
 
 function ListInvoice({ invoices = [], pageNumber, total }) {
   const router = useRouter();
@@ -85,6 +86,21 @@ function ListInvoice({ invoices = [], pageNumber, total }) {
   async function onDeleteInvoice(id) {
     const response = await deleteInvoice(id);
     console.log(response);
+    if (response?.error) {
+      toast.error(response?.error);
+    }
+    if (response?.message) {
+      toast.success(response?.message);
+    }
+  }
+
+  async function sendThisInvoice() {
+    console.log("Sending...");
+    const response = await sendEmail({
+      subject: "🔔 Invoice Notification!",
+      message: "This is an Invoice test notification.",
+      email: "satindersinghsall111@gmail.com",
+    });
     if (response?.error) {
       toast.error(response?.error);
     }
@@ -166,7 +182,7 @@ function ListInvoice({ invoices = [], pageNumber, total }) {
                         size={24}
                         color="purple"
                         className="cursor-pointer"
-                        // onClick={() => sendThisInvoice(inv)}
+                        onClick={() => sendThisInvoice(invoice)}
                       />
                     </Tooltip>
                   </span>
