@@ -2,12 +2,18 @@
 
 import nodemailer from "nodemailer";
 import * as handlebars from "handlebars";
+import { invoiceTemplate } from "@/lib/emailTemplates/invoice";
+
+function compileInvoiceTemplate(name, amount) {
+  const template = handlebars.compile(invoiceTemplate);
+  const htmlBody = template({ name, amount });
+  return htmlBody;
+}
 
 export const sendEmail = async ({ subject, message, email, data }) => {
-  const transposer = nodemailer.createTransport({
-    service: "gmail",
+  const transporter = nodemailer.createTransport({
     host: process.env.EMAIL_HOST,
-    port: 3000,
+    port: 465,
     secure: true,
     auth: {
       user: process.env.EMAIL_USERNAME,
@@ -15,22 +21,34 @@ export const sendEmail = async ({ subject, message, email, data }) => {
     },
   });
 
+  const template = compileInvoiceTemplate(data.name, data.amount);
+
   const mailOptions = {
     from: process.env.EMAIL_USERNAME,
     to: email,
     subject: subject,
-    html: message,
+    html: template,
   };
 
-  await new Promise((resolve, reject) => {
-    transposer.sendMail(mailOptions, function (err, info) {
-      if (err) {
-        console.log(err);
-        reject(err);
-      } else {
-        console.log("Email Sent:", info.response);
-        resolve(info.response);
-      }
+  try {
+    await new Promise((resolve, reject) => {
+      transporter.sendMail(mailOptions, function (err, info) {
+        if (err) {
+          console.log(err);
+          reject(err);
+        } else {
+          console.log("Email Sent:", info.response);
+          resolve(info.response);
+        }
+      });
     });
-  });
+
+    return {
+      message: "Email sent successfully!",
+    };
+  } catch (error) {
+    return {
+      error: "Email not send. Try again!",
+    };
+  }
 };

@@ -94,12 +94,15 @@ function ListInvoice({ invoices = [], pageNumber, total }) {
     }
   }
 
-  async function sendThisInvoice() {
-    console.log("Sending...");
+  async function sendThisInvoice(invoice) {
+    // console.log("Sending...");
     const response = await sendEmail({
       subject: "🔔 Invoice Notification!",
-      message: "This is an Invoice test notification.",
-      email: "satindersinghsall111@gmail.com",
+      email: invoice?.customer?.email,
+      data: {
+        name: invoice?.customer?.name,
+        amount: invoice?.amount,
+      },
     });
     if (response?.error) {
       toast.error(response?.error);
